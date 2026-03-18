@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Music Dashboard - Search and explore songs by artist using TheAudioDB API." />
+    <title>🎵 Music Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- ===== BACKGROUND DECORATION ===== -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <!-- ===== MAIN WRAPPER ===== -->
+    <div class="wrapper">
+
+        <!-- ===== HEADER ===== -->
+        <header class="header">
+            <div class="header-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="18" r="3" />
+                        <circle cx="21" cy="15" r="3" />
+                        <path d="M12 18V2l10-2v4L12 6" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">Music Dashboard</h1>
+                    <p class="brand-sub">Fasya Arinal Hudha - 102022400205 </p>
+                </div>
+            </div>
+            <div class="header-stats" id="header-stats">
+                <div class="stat-pill" id="stat-total">
+                    <span class="stat-dot"></span>
+                    Ready to explore
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== SEARCH + FILTER BAR ===== -->
+        <section class="controls-bar">
+
+            <!-- Search Input -->
+            <div class="search-wrapper">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                </span>
+                <input type="text" id="search-input" class="search-input"
+                    placeholder="Search artist, title (e.g. Coldplay, Manuk dadali...)" autocomplete="off"
+                    aria-label="Search by artist name" />
+                <button id="search-btn" class="search-btn" aria-label="Search">
+                    <span>Search</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Album Filter Dropdown -->
+            <div class="filter-wrapper">
+                <span class="filter-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                </span>
+                <select id="album-filter" class="album-filter" aria-label="Filter by album" disabled>
+                    <option value="all">All Albums</option>
+                </select>
+            </div>
+
+        </section>
+
+        <!-- ===== LOADING INDICATOR ===== -->
+        <div class="loader-wrapper" id="loader" style="display: none;">
+            <div class="loader-ring"></div>
+            <p class="loader-text">Fetching tracks…</p>
+        </div>
+
+        <!-- ===== ERROR MESSAGE ===== -->
+        <div class="error-box" id="error-box" style="display: none;">
+            <span class="error-icon">⚠️</span>
+            <p id="error-text">Something went wrong. Please try again.</p>
+        </div>
+
+        <!-- ===== EMPTY STATE ===== -->
+        <div class="empty-state" id="empty-state">
+            <div class="empty-icon">🎧</div>
+            <h2 class="empty-title">Ready to Discover Music?</h2>
+            <p class="empty-desc">Type an artist name or song above and hit <strong>Search</strong> to explore their
+                tracks.</p>
+        </div>
+
+        <!-- ===== TABLE CONTAINER ===== -->
+        <div class="table-container" id="table-container" style="display: none;">
+
+            <!-- Result Info Bar -->
+            <div class="result-bar">
+                <p class="result-info" id="result-info">Showing results</p>
+                <div class="page-info" id="page-info">Page 1</div>
+            </div>
+
+            <!-- Song Table -->
+            <div class="table-scroll">
+                <table class="song-table" id="song-table" aria-label="Song results table">
+                    <thead>
+                        <tr>
+                            <th class="col-no">#</th>
+                            <th class="col-art">Art</th>
+                            <th class="col-track">Track Name</th>
+                            <th class="col-artist">Artist</th>
+                            <th class="col-album">Album</th>
+                            <th class="col-genre">Genre</th>
+                            <th class="col-year">Year</th>
+                            <th class="col-link">Preview</th>
+                        </tr>
+                    </thead>
+                    <tbody id="song-tbody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ===== PAGINATION CONTROLS ===== -->
+            <div class="pagination" id="pagination">
+                <button id="prev-btn" class="page-btn" disabled aria-label="Previous page">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                    Prev
+                </button>
+                <div class="page-numbers" id="page-numbers">
+
+                </div>
+                <button id="next-btn" class="page-btn" aria-label="Next page">
+                    Next
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+        <!-- /table-container -->
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <p>Data provided by <a href="https://itunes.apple.com" target="_blank" rel="noopener">ITunes</a></p>
+        </footer>
+
+    </div>
+    <!-- /wrapper -->
+
+    <!-- ===== AUDIO PREVIEW MODAL ===== -->
+    <div class="preview-overlay" id="preview-overlay" role="dialog" aria-modal="true" aria-label="Audio Preview Player">
+        <div class="preview-modal" id="preview-modal">
+
+            <!-- Close Button -->
+            <button class="preview-close" id="preview-close" aria-label="Close preview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+
+            <!-- Album Art -->
+            <div class="preview-art-wrap">
+                <img id="preview-art" src="" alt="Album Art" class="preview-art" />
+                <div class="preview-art-glow"></div>
+            </div>
+
+            <!-- Track Info -->
+            <div class="preview-info">
+                <p class="preview-label">NOW PREVIEWING</p>
+                <h2 class="preview-track" id="preview-track">—</h2>
+                <p class="preview-artist" id="preview-artist">—</p>
+                <p class="preview-album" id="preview-album">—</p>
+            </div>
+
+            <!-- Waveform Animation -->
+            <div class="waveform" id="waveform" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="preview-progress-wrap">
+                <span class="preview-time" id="preview-current">0:00</span>
+                <div class="preview-progress-bar" id="preview-progress-bar" role="slider" aria-label="Seek">
+                    <div class="preview-progress-fill" id="preview-progress-fill"></div>
+                    <div class="preview-progress-thumb" id="preview-progress-thumb"></div>
+                </div>
+                <span class="preview-time" id="preview-duration">0:30</span>
+            </div>
+
+            <!-- Controls -->
+            <div class="preview-controls">
+                <button class="ctrl-btn" id="preview-rewind" aria-label="Rewind 5 seconds">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="1 4 1 10 7 10" />
+                        <path d="M3.51 15a9 9 0 1 0 .49-3.36" />
+                        <text x="8" y="14" font-size="6" fill="currentColor" stroke="none"
+                            font-family="Inter,sans-serif" font-weight="700">5</text>
+                    </svg>
+                </button>
+                <button class="ctrl-btn play-pause-btn" id="preview-playpause" aria-label="Play/Pause">
+                    <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                    <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+                        <rect x="6" y="4" width="4" height="16" />
+                        <rect x="14" y="4" width="4" height="16" />
+                    </svg>
+                </button>
+                <button class="ctrl-btn" id="preview-forward" aria-label="Forward 5 seconds">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="23 4 23 10 17 10" />
+                        <path d="M20.49 15a9 9 0 1 1-.49-3.36" />
+                        <text x="8" y="14" font-size="6" fill="currentColor" stroke="none"
+                            font-family="Inter,sans-serif" font-weight="700">5</text>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Hidden Audio Element -->
+            <audio id="preview-audio" preload="auto"></audio>
+
+        </div>
+    </div>
+
+    <!-- Main Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
